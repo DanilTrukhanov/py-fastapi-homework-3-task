@@ -2,14 +2,12 @@ from datetime import datetime, timezone
 from typing import cast
 
 from fastapi import APIRouter, Depends, status, HTTPException
-from jose import JWTError, jwt
-from sqlalchemy import select, delete
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 
-from config import get_jwt_auth_manager, get_settings, BaseAppSettings
-from config.settings import Settings
+from config import get_jwt_auth_manager
 from database import (
     get_db,
     UserModel,
@@ -246,7 +244,7 @@ async def login(
         )
 
 
-@router.post("/refresh/", status_code=status.HTTP_200_OK, )
+@router.post("/refresh/", status_code=status.HTTP_200_OK, response_model=TokenRefreshResponseSchema)
 async def refresh_access_token(
         data: TokenRefreshRequestSchema,
         db: AsyncSession = Depends(get_db),
